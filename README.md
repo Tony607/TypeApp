@@ -1,5 +1,5 @@
 # Type App
-A GUI automaticly types. Use case, initial server setup with noVNC/QEMU terminal where copy paste is not available.
+A GUI automatically types. Use case, initial server setup with noVNC/QEMU terminal where copy paste is not available.
 ### Quick start
 #### Install dependencies
 pip3 install pyautogui wx
