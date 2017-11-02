@@ -2,6 +2,7 @@ import pyautogui
 import time
 import os
 import wx
+import wx.adv
 import threading
 import json
 
@@ -80,8 +81,8 @@ class TypingThread(threading.Thread):
 
 class MainView(wx.Frame):
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Type App", pos=wx.DefaultPosition,
-                          size=wx.Size(614, 507), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Type APP", pos=wx.DefaultPosition, size=wx.Size(614, 573),
+                          style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
@@ -91,14 +92,22 @@ class MainView(wx.Frame):
         self.m_staticText1.Wrap(-1)
         main_v_sizer.Add(self.m_staticText1, 0, wx.ALL, 5)
 
-        self.text_ctrl_history = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(550, 300),
+        self.text_ctrl_history = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(600, 300),
                                              wx.TE_MULTILINE)
+        self.text_ctrl_history.SetToolTip(u"Sent history")
+
         main_v_sizer.Add(self.text_ctrl_history, 0, wx.ALL, 5)
+
+        self.m_staticText2 = wx.StaticText(self, wx.ID_ANY, u"Input", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_staticText2.Wrap(-1)
+        main_v_sizer.Add(self.m_staticText2, 0, wx.ALL, 5)
 
         cmd_h_sizer = wx.BoxSizer(wx.HORIZONTAL)
 
         self.text_ctrl_cmd = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(400, 150),
                                          wx.TE_MULTILINE)
+        self.text_ctrl_cmd.SetToolTip(u"Type here and click Sent button")
+
         cmd_h_sizer.Add(self.text_ctrl_cmd, 0, wx.ALL, 5)
 
         cmd_ctl_v_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -107,15 +116,26 @@ class MainView(wx.Frame):
 
         self.checkbox_enter = wx.CheckBox(self, wx.ID_ANY, u"Enter", wx.DefaultPosition, wx.DefaultSize, 0)
         self.checkbox_enter.SetValue(True)
+        self.checkbox_enter.SetToolTip(u"Append Enter key for each Sent")
+
         cmd_ctl_opt_sizer.Add(self.checkbox_enter, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
         self.checkbox_switch_win = wx.CheckBox(self, wx.ID_ANY, u"Auto Switch", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.checkbox_switch_win.SetToolTip(u"Auto switch to window before typing")
+
         cmd_ctl_opt_sizer.Add(self.checkbox_switch_win, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
         cmd_ctl_v_sizer.Add(cmd_ctl_opt_sizer, 1, wx.ALL | wx.EXPAND, 5)
 
+        self.m_staticText3 = wx.StaticText(self, wx.ID_ANY, u"Window Feature File", wx.DefaultPosition, wx.DefaultSize,
+                                           0)
+        self.m_staticText3.Wrap(-1)
+        cmd_ctl_v_sizer.Add(self.m_staticText3, 0, wx.ALL, 5)
+
         self.file_picker_img = wx.FilePickerCtrl(self, wx.ID_ANY, wx.EmptyString, u"Select a file", u"*.*",
                                                  wx.DefaultPosition, wx.DefaultSize, wx.FLP_DEFAULT_STYLE)
+        self.file_picker_img.SetToolTip(u"Select a image file")
+
         cmd_ctl_v_sizer.Add(self.file_picker_img, 0, wx.ALL, 5)
 
         self.button_sent = wx.Button(self, wx.ID_ANY, u"Sent", wx.DefaultPosition, wx.DefaultSize, 0)
@@ -127,6 +147,25 @@ class MainView(wx.Frame):
 
         self.SetSizer(main_v_sizer)
         self.Layout()
+        self.main_menubar = wx.MenuBar(0)
+        self.menu_file = wx.Menu()
+        self.menu_choose_feature = wx.MenuItem(self.menu_file, wx.ID_ANY, u"Choose Feature File", wx.EmptyString,
+                                               wx.ITEM_NORMAL)
+        self.menu_file.Append(self.menu_choose_feature)
+
+        self.menu_load_file = wx.MenuItem(self.menu_file, wx.ID_ANY, u"Load Input from File", wx.EmptyString,
+                                          wx.ITEM_NORMAL)
+        self.menu_file.Append(self.menu_load_file)
+
+        self.main_menubar.Append(self.menu_file, u"File")
+
+        self.menu_help = wx.Menu()
+        self.menu_get_about = wx.MenuItem(self.menu_help, wx.ID_ANY, u"About", wx.EmptyString, wx.ITEM_NORMAL)
+        self.menu_help.Append(self.menu_get_about)
+
+        self.main_menubar.Append(self.menu_help, u"Help")
+
+        self.SetMenuBar(self.main_menubar)
 
         self.Centre(wx.BOTH)
 
@@ -159,6 +198,9 @@ class MainView(wx.Frame):
         if os.path.exists(img) or img == "":
             self.file_picker_img.SetPath(img)
 
+    def sent_enable(self, enable):
+        self.button_sent.Enable(enable)
+
 
 class Model:
     def __init__(self):
@@ -170,6 +212,9 @@ class Controller:
         self.model = Model()
         self.main_view = MainView(None)
         self.main_view.button_sent.Bind(wx.EVT_BUTTON, self.type_command)
+        self.main_view.Bind(wx.EVT_MENU, self.choose_feature_img, id=self.main_view.menu_choose_feature.GetId())
+        self.main_view.Bind(wx.EVT_MENU, self.load_input_file, id=self.main_view.menu_load_file.GetId())
+        self.main_view.Bind(wx.EVT_MENU, self.show_about, id=self.main_view.menu_get_about.GetId())
         self.main_view.Bind(wx.EVT_CLOSE, self.on_close)
         self.main_view.Bind(EVT_TYPE, self.on_type_over)
         self.load_config()
@@ -198,14 +243,52 @@ class Controller:
                 json.dump(DEFAULT_CONFIGS, json_file, indent=4)
             self.main_view.load_settings(DEFAULT_CONFIGS["enter"], DEFAULT_CONFIGS["switch"], DEFAULT_CONFIGS["img"])
 
-    def type_command(self,evt):
+    def choose_feature_img(self, event):
+        event.Skip()
+        img_file_dialog = wx.FileDialog(None, "Feature image", "", "",
+                                           "Image File (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png",
+                                            wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        if img_file_dialog.ShowModal() == wx.ID_CANCEL:
+            return  # the user changed idea...
+        img = img_file_dialog.GetPath()
+        self.main_view.file_picker_img.SetPath(img)
+
+    def load_input_file(self, event):
+        event.Skip()
+        input_file_dialog = wx.FileDialog(None, "Input Text File", "", "",
+                                           "Text File (*.*)|*.*",
+                                            wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        if input_file_dialog.ShowModal() == wx.ID_CANCEL:
+            return  # the user changed idea...
+        file = input_file_dialog.GetPath()
+        with open(file, "r") as f:
+            try:
+                text = f.read()
+                self.main_view.text_ctrl_cmd.SetValue(text)
+            except:
+                msg = wx.MessageDialog(None, message="Not a text file.",
+                                       caption="Error", style=wx.ICON_INFORMATION)
+                msg.ShowModal()
+                msg.Destroy()
+
+    def show_about(self, event):
+        event.Skip()
+        about_info = wx.adv.AboutDialogInfo()
+        about_info.SetName("Type App")
+        about_info.SetVersion("V1.0")
+        about_info.SetDescription("An automatically typing GUI.\n ")
+        about_info.SetWebSite("https://github.com/Tony607/TypeApp", "GitHub")
+        about_info.SetDevelopers(["Chengwei"])
+        wx.adv.AboutBox(about_info)
+
+    def type_command(self, evt):
+        self.main_view.sent_enable(False)
         enter = self.main_view.get_enter()
         cmd = self.main_view.get_cmd()
         img_path = self.main_view.get_img_path()
         print(cmd)
         if enter:
             cmd = cmd + "\n"
-        self.main_view.append_history(cmd)
         worker = TypingThread(self.main_view, TypePara(cmd, img_path))
         worker.start()
 
@@ -215,6 +298,7 @@ class Controller:
             print("Done Typing \"{}\"".format(evt_value))
         else:
             pyautogui.alert('Please move the window \"feature\" to current screen and try again.')
+        self.main_view.sent_enable(True)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 {
     "switch": true,
-    "enter": true,
-    "img": ".\\res\\kiwi_vnc.png"
+    "img": ".\\res\\kiwi_vnc.png",
+    "enter": true
 }
