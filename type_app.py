@@ -22,6 +22,7 @@ class TypePara:
         else:
             self.img = None
 
+
 class TypingEvent(wx.PyCommandEvent):
     """Event to signal that a count value is ready"""
     def __init__(self, etype, eid, value=None):
