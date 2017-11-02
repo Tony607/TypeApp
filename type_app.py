@@ -67,6 +67,7 @@ class TypingThread(threading.Thread):
                     done_typing = True
                     pyautogui.moveTo(last_coordinate[0], last_coordinate[1], duration=.1)
             else:
+                time.sleep(2)
                 pyautogui.typewrite(cmd, interval=0.01)
                 done_typing = True
             if done_typing:
@@ -157,8 +158,6 @@ class MainView(wx.Frame):
             img = ""
         if os.path.exists(img) or img == "":
             self.file_picker_img.SetPath(img)
-        else:
-            raise FileExistsError('Path: \"{}\" not exist.'.format(img))
 
 
 class Model:

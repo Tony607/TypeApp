@@ -1,5 +1,5 @@
 {
-    "enter": true,
     "switch": true,
-    "img": "E:\\SW_WS\\Python_SW\\Python_play\\res\\kiwi_vnc.png"
+    "enter": true,
+    "img": ".\\res\\kiwi_vnc.png"
 }
