@@ -1,5 +1,5 @@
 # Type App
-A GUI automatically types. Use case, initial server setup with noVNC/QEMU terminal where copy paste is not available.
+A GUI automatically types. Use case, initial server setup with noVNC/QEMU terminal where copy paste is not available. Check out the YouTube demo [here](https://www.youtube.com/watch?v=y0-UUlOJvmU).
 
 ### How it works
 With the  **Auto Switch** function on
@@ -12,9 +12,15 @@ You type something into the bottom text box and click the send button.
 #### Install dependencies
 pip3 install pyautogui wx
 #### Run the GUI
-Capture a screenshot of a distinguishable feature **inside** the VNC window, an example is provided in the res/kiwi_vnc.png
+Capture and save a screenshot of a distinguishable feature **inside** the VNC window, an example is provided in the res/kiwi_vnc.png
 
 ![window feature](https://raw.githubusercontent.com/Tony607/TypeApp/master/res/kiwi_vnc.png)
+
+Captured from this window
+
+![VNC_Browser](https://raw.githubusercontent.com/Tony607/TypeApp/master/res/VNC_Window_demo.png)
+
+I use [PicPick](http://ngwin.com/picpick) on Windows to capture the image.
 
 Run the App by
 
