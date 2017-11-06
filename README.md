@@ -1,5 +1,6 @@
 # Type App
 A GUI automatically types. Use case, initial server setup with noVNC/QEMU terminal where copy paste is not available. Check out the YouTube demo [here](https://www.youtube.com/watch?v=y0-UUlOJvmU).
+If you want to dive into the code to learn how it works, I also have a [write up](https://www.dlology.com/blog/how-to-paste-content-to-a-vnc-console-which-does-not-support-copy-and-paste/)
 
 ### How it works
 With the  **Auto Switch** function on

@@ -25,7 +25,7 @@ class TypePara:
 
 
 class TypingEvent(wx.PyCommandEvent):
-    """Event to signal that a count value is ready"""
+    """Event to signal that typing is done"""
     def __init__(self, etype, eid, value=None):
         """Creates the event object"""
         wx.PyCommandEvent.__init__(self, etype, eid)
@@ -43,7 +43,7 @@ class TypingThread(threading.Thread):
     def __init__(self, parent, value):
         """
                 @param parent: The gui object that should recieve the value
-                @param value: value to 'calculate' to
+                @param value: value to type to
                 """
         threading.Thread.__init__(self)
         self._parent = parent
@@ -106,7 +106,7 @@ class MainView(wx.Frame):
 
         self.text_ctrl_cmd = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(400, 150),
                                          wx.TE_MULTILINE)
-        self.text_ctrl_cmd.SetToolTip(u"Type here and click Sent button")
+        self.text_ctrl_cmd.SetToolTip(u"Type here and click Send button")
 
         cmd_h_sizer.Add(self.text_ctrl_cmd, 0, wx.ALL, 5)
 
@@ -116,7 +116,7 @@ class MainView(wx.Frame):
 
         self.checkbox_enter = wx.CheckBox(self, wx.ID_ANY, u"Enter", wx.DefaultPosition, wx.DefaultSize, 0)
         self.checkbox_enter.SetValue(True)
-        self.checkbox_enter.SetToolTip(u"Append Enter key for each Sent")
+        self.checkbox_enter.SetToolTip(u"Append Enter key for each Send")
 
         cmd_ctl_opt_sizer.Add(self.checkbox_enter, 0, wx.ALIGN_CENTER | wx.ALL, 5)
 
@@ -138,8 +138,8 @@ class MainView(wx.Frame):
 
         cmd_ctl_v_sizer.Add(self.file_picker_img, 0, wx.ALL, 5)
 
-        self.button_sent = wx.Button(self, wx.ID_ANY, u"Sent", wx.DefaultPosition, wx.DefaultSize, 0)
-        cmd_ctl_v_sizer.Add(self.button_sent, 0, wx.ALL, 5)
+        self.button_send = wx.Button(self, wx.ID_ANY, u"Send", wx.DefaultPosition, wx.DefaultSize, 0)
+        cmd_ctl_v_sizer.Add(self.button_send, 0, wx.ALL, 5)
 
         cmd_h_sizer.Add(cmd_ctl_v_sizer, 1, wx.EXPAND, 5)
 
@@ -198,8 +198,8 @@ class MainView(wx.Frame):
         if os.path.exists(img) or img == "":
             self.file_picker_img.SetPath(img)
 
-    def sent_enable(self, enable):
-        self.button_sent.Enable(enable)
+    def send_enable(self, enable):
+        self.button_send.Enable(enable)
 
 
 class Model:
@@ -211,7 +211,7 @@ class Controller:
     def __init__(self, app):
         self.model = Model()
         self.main_view = MainView(None)
-        self.main_view.button_sent.Bind(wx.EVT_BUTTON, self.type_command)
+        self.main_view.button_send.Bind(wx.EVT_BUTTON, self.type_command)
         self.main_view.Bind(wx.EVT_MENU, self.choose_feature_img, id=self.main_view.menu_choose_feature.GetId())
         self.main_view.Bind(wx.EVT_MENU, self.load_input_file, id=self.main_view.menu_load_file.GetId())
         self.main_view.Bind(wx.EVT_MENU, self.show_about, id=self.main_view.menu_get_about.GetId())
@@ -282,7 +282,7 @@ class Controller:
         wx.adv.AboutBox(about_info)
 
     def type_command(self, evt):
-        self.main_view.sent_enable(False)
+        self.main_view.send_enable(False)
         enter = self.main_view.get_enter()
         cmd = self.main_view.get_cmd()
         img_path = self.main_view.get_img_path()
@@ -298,7 +298,7 @@ class Controller:
             print("Done Typing \"{}\"".format(evt_value))
         else:
             pyautogui.alert('Please move the window \"feature\" to current screen and try again.')
-        self.main_view.sent_enable(True)
+        self.main_view.send_enable(True)
 
 
 if __name__ == "__main__":
